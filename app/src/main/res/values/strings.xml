@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">NewsApp</string>
+    <string name="read_full_news">Read full news : %s</string>
+    <string name="hours_ago_label">%s hrs ago</string>
+    <string name="from_label">From: %s</string>
+    <string name="error_message">No Results</string>
+</resources>
