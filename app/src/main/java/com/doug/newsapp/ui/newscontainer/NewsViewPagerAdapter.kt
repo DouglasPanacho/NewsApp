@@ -1,4 +1,4 @@
-package com.doug.newsapp.ui.main
+package com.doug.newsapp.ui.newscontainer
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -6,7 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.doug.newsapp.ui.news.NewsFragment
 
-class MainViewPagerAdapter(
+class NewsViewPagerAdapter(
     private val array: Array<String>,
     fragmentManager: FragmentManager,
     lifecycle: Lifecycle
