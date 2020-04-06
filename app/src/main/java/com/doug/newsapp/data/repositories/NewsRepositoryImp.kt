@@ -2,7 +2,7 @@ package com.doug.newsapp.data.repositories
 
 import com.doug.newsapp.data.remote.models.Article
 import com.doug.newsapp.data.remote.services.NewsDataManager
-import com.doug.newsapp.helpers.toDate
+import com.doug.newsapp.helpers.extensions.toDate
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject

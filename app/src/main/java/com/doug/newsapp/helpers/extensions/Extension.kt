@@ -1,4 +1,4 @@
-package com.doug.newsapp.helpers
+package com.doug.newsapp.helpers.extensions
 
 import android.content.Context
 import android.widget.Toast

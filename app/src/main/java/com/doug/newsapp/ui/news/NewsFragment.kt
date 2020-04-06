@@ -10,11 +10,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.doug.newsapp.App
 import com.doug.newsapp.R
 import com.doug.newsapp.data.remote.models.Article
-import com.doug.newsapp.helpers.FRAG_OPERATION
+import com.doug.newsapp.helpers.extensions.FRAG_OPERATION
 import com.doug.newsapp.helpers.ItemDecoratorRecyclerView
 import com.doug.newsapp.helpers.PaginationScrollControl
 import com.doug.newsapp.helpers.constants.Constants
-import com.doug.newsapp.helpers.executeFragOperation
+import com.doug.newsapp.helpers.extensions.executeFragOperation
 import com.doug.newsapp.helpers.layoutManagers.CustomGridLayoutManager
 import com.doug.newsapp.ui.base.BaseAdapter
 import com.doug.newsapp.ui.base.BaseFragment
@@ -77,6 +77,7 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
         swipeToRefresh.setOnRefreshListener(this)
         setupRecyclerView()
         setupObservers()
+        isRefreshed = true
         loadMoreItems(0)
     }
 
