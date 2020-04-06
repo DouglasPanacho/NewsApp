@@ -89,6 +89,7 @@ class NewsDetailsFragment : BaseFragment() {
     }
 
     override fun setupToolbar() {
+        toolbar.visibility = View.VISIBLE
         toolbar.navigationIcon = ContextCompat.getDrawable(context!!, R.drawable.ic_back)
         toolbar.title = getString(R.string.app_name)
         toolbar.setNavigationOnClickListener {

@@ -33,9 +33,14 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
     companion object {
 
         const val TAG = "HomeFragment"
+        const val COUNTRY = "Country"
 
-        fun getInstance(): NewsFragment {
-            return NewsFragment()
+        fun getInstance(country: String): NewsFragment {
+            val fragment = NewsFragment()
+            val bundle = Bundle()
+            bundle.putString(COUNTRY, country)
+            fragment.arguments = bundle
+            return fragment
         }
     }
 
@@ -44,7 +49,7 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
 
     @Inject
     lateinit var newsAdapter: NewsAdapter
-
+    private lateinit var country: String
     private var isRefreshed = false
     private lateinit var viewModel: NewsViewModel
     private lateinit var paginationScrollControl: PaginationScrollControl<NewsAdapter>
@@ -78,6 +83,7 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
         setupRecyclerView()
         setupObservers()
         isRefreshed = true
+        getCountryArgument()
         loadMoreItems(0)
     }
 
@@ -134,16 +140,18 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
         }
     }
 
+    private fun getCountryArgument() {
+        if (arguments != null) {
+            arguments.also { country = it!!.getString(COUNTRY, "us") }
+        }
+    }
+
     /**
      * Load more items
      * @param pageCount next page to be requested
      */
     override fun loadMoreItems(pageCount: Int) {
-        viewModel.getNews(pageCount)
-    }
-
-    override fun setupToolbar() {
-        toolbar.title = getString(R.string.app_name)
+        viewModel.getNews(pageCount, country)
     }
 
     /**
