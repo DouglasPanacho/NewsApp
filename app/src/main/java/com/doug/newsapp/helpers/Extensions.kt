@@ -40,7 +40,7 @@ fun FragmentTransaction.executeFragOperation(
             .addToBackStack(tag)
             .add(R.id.container, fragment, tag)
         is FragOperation.RemoveOperation -> setCustomAnimations(operation.enterAnim,operation.exitAnim).remove(fragment)
-        else -> replace(R.id.container, fragment).addToBackStack(tag)
+        else -> replace(R.id.container, fragment)
     }
     commit()
 }

@@ -27,7 +27,7 @@ class PaginationScrollControl<in T : BaseAdapter<*>>(
                 if (layoutManager.findLastVisibleItemPosition() == adapter.getListItems().size - 1) {
                     isLoading = true
                     if (lastPageCount != pageCount) {
-                        paginationControllerListener.loadMoreItems(pageCount)
+                        paginationControllerListener.getNews(pageCount)
                         lastPageCount = pageCount
                         pageCount++
                     }
@@ -43,7 +43,7 @@ class PaginationScrollControl<in T : BaseAdapter<*>>(
     }
 
     interface PaginationController {
-        fun loadMoreItems(pageCount: Int)
+        fun getNews(pageCount: Int)
     }
 
 }

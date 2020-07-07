@@ -10,11 +10,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.doug.newsapp.App
 import com.doug.newsapp.R
 import com.doug.newsapp.data.remote.models.Article
-import com.doug.newsapp.helpers.FragOperation
-import com.doug.newsapp.helpers.ItemDecoratorRecyclerView
-import com.doug.newsapp.helpers.PaginationScrollControl
-import com.doug.newsapp.helpers.constants.Constants
-import com.doug.newsapp.helpers.executeFragOperation
+import com.doug.newsapp.helpers.*
 import com.doug.newsapp.helpers.layoutManagers.CustomGridLayoutManager
 import com.doug.newsapp.ui.base.BaseAdapter
 import com.doug.newsapp.ui.base.BaseFragment
@@ -33,6 +29,7 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
     companion object {
 
         const val TAG = "HomeFragment"
+        const val SAVE_STATE = "SaveState"
 
         fun getInstance(): NewsFragment {
             return NewsFragment()
@@ -47,6 +44,7 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
 
     private var isRefreshed = false
     private lateinit var viewModel: NewsViewModel
+    private var recoveredState: Boolean = false
     private lateinit var paginationScrollControl: PaginationScrollControl<NewsAdapter>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +56,7 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
 
     override fun onItemClicked(t: Any) {
         fragmentManager?.beginTransaction()?.executeFragOperation(
-            FragOperation.ReplaceOperation,
+            FragOperation.AddOperation(),
             NewsDetailsFragment.newInstance(t as Article),
             NewsDetailsFragment.TAG
         )
@@ -76,41 +74,44 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
         super.onActivityCreated(savedInstanceState)
         swipeToRefresh.setOnRefreshListener(this)
         setupRecyclerView()
+        if (savedInstanceState == null) {
+            getNews(0)
+        } else {
+            recoveredState = true
+            newsAdapter.addNewsItems(
+                viewModel.savedNews,
+                true
+            )
+        }
         setupObservers()
-        loadMoreItems(0)
     }
 
     private fun setupObservers() {
-        viewModel.getNewsLiveData().observe(viewLifecycleOwner, Observer {
-            newsAdapter.addNewsItems(it, isRefreshed)
-            if (isRefreshed) isRefreshed = false
+        viewModel.getViewStatus().observe(viewLifecycleOwner, Observer {
+            if (!recoveredState)
+                updateView(it)
+            else recoveredState = false
         })
-        viewModel.getStatus().observe(viewLifecycleOwner, Observer { handleStatus(it) })
     }
 
-    /**
-     * Used to handle view status, updating all the necessary controllers
-     */
-    private fun handleStatus(status: Constants.VIEW_STATUS) {
-        when (status) {
-            Constants.VIEW_STATUS.LOADING -> {
+    private fun updateView(viewStatus: ViewStatus) {
+        when (viewStatus) {
+            is ViewStatus.SuccessStatus<*> -> {
+                newsAdapter.addNewsItems(
+                    viewStatus.items as MutableList<Article>,
+                    isRefreshed
+                )
+            }
+            is ViewStatus.LoadingStatus -> {
                 if (emptyView.visibility == View.VISIBLE) emptyView.visibility = View.GONE
                 progressBar.visibility = View.VISIBLE
             }
-            Constants.VIEW_STATUS.EMPTY -> {
-                if (newsAdapter.itemCount == 0) {
-                    emptyView.visibility =
-                        View.VISIBLE
-                }
-                progressBar.visibility = View.GONE
-            }
-            Constants.VIEW_STATUS.SUCCESS -> {
-                emptyView.visibility = View.GONE
+            is ViewStatus.ErrorStatus -> {
+                emptyView.visibility = View.VISIBLE
                 progressBar.visibility = View.GONE
             }
         }
-        // used to control the refresh, to avoid adding the same items again on the view
-        swipeToRefresh.isRefreshing = false
+        if (isRefreshed) isRefreshed = false
     }
 
     private fun setupRecyclerView() {
@@ -133,11 +134,16 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(SAVE_STATE, true)
+        super.onSaveInstanceState(outState)
+    }
+
     /**
      * Load more items
      * @param pageCount next page to be requested
      */
-    override fun loadMoreItems(pageCount: Int) {
+    override fun getNews(pageCount: Int) {
         viewModel.getNews(pageCount)
     }
 
@@ -151,6 +157,6 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
     override fun onRefresh() {
         paginationScrollControl.clear()
         isRefreshed = true
-        loadMoreItems(0)
+        getNews(0)
     }
 }

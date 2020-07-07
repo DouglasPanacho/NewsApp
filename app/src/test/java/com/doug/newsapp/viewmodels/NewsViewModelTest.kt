@@ -40,7 +40,7 @@ class NewsViewModelTest : BaseTestClass() {
         newsViewModel.getStatus().observeForever { observer }
         newsViewModel.getNews(0)
         Assert.assertTrue(newsViewModel.getStatus().value == Constants.VIEW_STATUS.SUCCESS)
-        Assert.assertTrue(newsViewModel.getNewsLiveData().value?.size == 2)
+        Assert.assertTrue(newsViewModel.getViewStatus().value?.size == 2)
     }
 
     @Test
@@ -61,7 +61,7 @@ class NewsViewModelTest : BaseTestClass() {
         )
         newsViewModel.getNews(0)
         Assert.assertTrue(newsViewModel.getStatus().value == Constants.VIEW_STATUS.EMPTY)
-        Assert.assertTrue(newsViewModel.getNewsLiveData().value == null)
+        Assert.assertTrue(newsViewModel.getViewStatus().value == null)
 
     }
 
