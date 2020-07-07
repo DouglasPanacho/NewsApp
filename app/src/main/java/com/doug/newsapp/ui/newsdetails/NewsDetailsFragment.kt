@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.doug.newsapp.R
 import com.doug.newsapp.data.remote.models.Article
-import com.doug.newsapp.helpers.FRAG_OPERATION
+import com.doug.newsapp.helpers.FragOperation
 import com.doug.newsapp.helpers.executeFragOperation
 import com.doug.newsapp.ui.base.BaseFragment
 import com.doug.newsapp.ui.main.MainActivity
@@ -92,8 +92,10 @@ class NewsDetailsFragment : BaseFragment() {
         toolbar.navigationIcon = ContextCompat.getDrawable(context!!, R.drawable.ic_back)
         toolbar.title = getString(R.string.app_name)
         toolbar.setNavigationOnClickListener {
-            fragmentManager?.beginTransaction()?.executeFragOperation(FRAG_OPERATION.REMOVE, this)
+            fragmentManager?.beginTransaction()?.executeFragOperation(FragOperation.RemoveOperation(), this,TAG)
         }
         (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
+
+
 }
