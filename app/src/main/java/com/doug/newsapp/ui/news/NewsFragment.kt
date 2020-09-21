@@ -74,14 +74,11 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
         super.onActivityCreated(savedInstanceState)
         swipeToRefresh.setOnRefreshListener(this)
         setupRecyclerView()
-        if (savedInstanceState == null) {
-            getNews(0)
-        } else {
+        if (isViewRestoration(savedInstanceState)) {
             recoveredState = true
-            newsAdapter.addNewsItems(
-                viewModel.savedNews,
-                true
-            )
+            newsAdapter.addNewsItems(viewModel.savedNews, true)
+        } else {
+            getMoreItems()
         }
         setupObservers()
     }
@@ -94,11 +91,11 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
         })
     }
 
-    private fun updateView(viewStatus: ViewStatus) {
+    private fun updateView(viewStatus: ViewStatus<MutableList<Article>>) {
         when (viewStatus) {
-            is ViewStatus.SuccessStatus<*> -> {
+            is ViewStatus.SuccessStatus -> {
                 newsAdapter.addNewsItems(
-                    viewStatus.items as MutableList<Article>,
+                    viewStatus.items,
                     isRefreshed
                 )
             }
@@ -117,15 +114,13 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
     private fun setupRecyclerView() {
         val orientation = resources.configuration.orientation
         val layoutManager = CustomGridLayoutManager(context!!, orientation)
-        val decorator =
-            ItemDecoratorRecyclerView(layoutManager.spanCount)
+        val decorator = ItemDecoratorRecyclerView(layoutManager.spanCount)
         newsAdapter.setOnClickListener(this)
-        paginationScrollControl =
-            PaginationScrollControl(
-                newsAdapter,
-                layoutManager,
-                this
-            )
+        paginationScrollControl = PaginationScrollControl(
+            newsAdapter,
+            layoutManager,
+            this
+        )
         newsRecyclerView.also {
             it.addItemDecoration(decorator)
             it.layoutManager = layoutManager
@@ -143,7 +138,7 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
      * Load more items
      * @param pageCount next page to be requested
      */
-    override fun getNews(pageCount: Int) {
+    override fun getMoreItems(pageCount: Int) {
         viewModel.getNews(pageCount)
     }
 
@@ -157,6 +152,6 @@ class NewsFragment : BaseFragment(), BaseAdapter.OnItemClickListener,
     override fun onRefresh() {
         paginationScrollControl.clear()
         isRefreshed = true
-        getNews(0)
+        getMoreItems()
     }
 }

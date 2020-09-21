@@ -1,7 +1,7 @@
 package com.doug.newsapp.helpers
 
-sealed class ViewStatus {
-    object ErrorStatus : ViewStatus()
-    object LoadingStatus : ViewStatus()
-    data class SuccessStatus<T>(var items: T) : ViewStatus()
+sealed class ViewStatus<T> {
+    class ErrorStatus<T> : ViewStatus<T>()
+    class LoadingStatus<T> : ViewStatus<T>()
+    data class SuccessStatus<T>(var items: T) : ViewStatus<T>()
 }

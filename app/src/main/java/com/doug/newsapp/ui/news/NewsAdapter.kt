@@ -24,18 +24,16 @@ class NewsAdapter @Inject constructor() : BaseAdapter<Article>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH<Article> {
         requestManager = Glide.with(parent.context)
-        var viewHolder: VH<Article> = if (viewType == HEADER_VIEW_TYPE) {
+        val viewHolder: VH<Article> = if (viewType == HEADER_VIEW_TYPE) {
             NewsViewHolder(
                 requestManager,
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.header_news_item_layout, parent, false)
+                LayoutInflater.from(parent.context).inflate(R.layout.header_news_item_layout, parent, false)
             )
 
         } else {
             NewsViewHolder(
                 requestManager,
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.news_item_layout, parent, false)
+                LayoutInflater.from(parent.context).inflate(R.layout.news_item_layout, parent, false)
             )
         }
 
@@ -47,18 +45,18 @@ class NewsAdapter @Inject constructor() : BaseAdapter<Article>() {
         return viewHolder
     }
 
-    override fun setOnClickListener(clickListener: OnItemClickListener) {
-        listener = clickListener
+    override fun setOnClickListener(listener: OnItemClickListener) {
+        this.listener = listener
     }
 
-    class NewsViewHolder(private val requestManager: RequestManager, itemview: View) :
-        VH<Article>(itemview) {
+    class NewsViewHolder(private val requestManager: RequestManager, itemView: View) :
+        VH<Article>(itemView) {
 
-        private val titleTv: TextView = itemview.titleTextView
-        private val subtitleTv: TextView = itemview.descriptionTextView
-        private val fontTv: TextView = itemview.fontTextView
-        private val timeTv: TextView = itemview.timeTextView
-        private val newsImage: ImageView = itemview.newsImage
+        private val titleTv: TextView = itemView.titleTextView
+        private val subtitleTv: TextView = itemView.descriptionTextView
+        private val fontTv: TextView = itemView.fontTextView
+        private val timeTv: TextView = itemView.timeTextView
+        private val newsImage: ImageView = itemView.newsImage
 
         override fun bind(item: Article) {
             requestManager.load(item.urlToImage)
@@ -67,12 +65,12 @@ class NewsAdapter @Inject constructor() : BaseAdapter<Article>() {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(newsImage)
-            titleTv.text = item.title
-            subtitleTv.text = item.description
-            fontTv.text = itemView.context.getString(R.string.from_label, item.source?.name)
-            timeTv.text = itemView.context.getString(R.string.hours_ago_label, item.publishedAt)
-
-
+            item.also {
+                titleTv.text = it.title
+                subtitleTv.text = it.description
+                fontTv.text = itemView.context.getString(R.string.from_label, it.source?.name)
+                timeTv.text = itemView.context.getString(R.string.hours_ago_label, it.publishedAt)
+            }
         }
     }
 

@@ -27,9 +27,8 @@ class NewsDetailsFragment : BaseFragment() {
 
     companion object {
         const val TAG = "NewsDetailsFragment"
-        const val ARTICLE_ARGUMENT = "ARTICLE_ARGUMENT"
+        const val ARTICLE_ARGUMENT = "ArticleArgument"
         fun newInstance(article: Article): NewsDetailsFragment {
-
             val frag = NewsDetailsFragment()
             val bundle = Bundle()
             bundle.putParcelable(ARTICLE_ARGUMENT, article)

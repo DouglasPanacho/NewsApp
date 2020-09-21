@@ -17,17 +17,17 @@ class NewsViewModel @Inject constructor() : BaseViewModel() {
     @Inject
     lateinit var newsRepository: NewsRepository
 
-    private var viewStatus: MutableLiveData<ViewStatus> = MutableLiveData()
+    private var viewStatus: MutableLiveData<ViewStatus<MutableList<Article>>> = MutableLiveData()
     var savedNews: MutableList<Article> = mutableListOf()
 
-    fun getViewStatus(): LiveData<ViewStatus> = viewStatus
+    fun getViewStatus(): LiveData<ViewStatus<MutableList<Article>>> = viewStatus
 
     /**
      * Method responsible to get all the headline news and update the
      * view status
      * @param page The current page to request  from api
      * @param country The desired country **/
-    fun getNews(page: Int, country: String = "us") {
+    fun getNews(page: Int = 0, country: String = "us") {
         androidDisposable += newsRepository.getHeadlineNews(page, country)
             .flatMapIterable { it }
             .doOnNext {
@@ -36,13 +36,13 @@ class NewsViewModel @Inject constructor() : BaseViewModel() {
             .toList()
             .subscribeOn(Schedulers.io())
             .onErrorReturn {
-                viewStatus.postValue(ViewStatus.ErrorStatus)
+                viewStatus.postValue(ViewStatus.ErrorStatus())
                 mutableListOf()
             }
             .doOnSuccess {
                 if (it.size == 0 && page == 0) {
                     // viewStatus.postValue(Constants.VIEW_STATUS.EMPTY)
-                    viewStatus.postValue(ViewStatus.LoadingStatus)
+                    viewStatus.postValue(ViewStatus.LoadingStatus())
                 } else {
                     savedNews.addAll(it)
                     viewStatus.postValue(ViewStatus.SuccessStatus(it))
