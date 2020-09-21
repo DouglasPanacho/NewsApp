@@ -4,7 +4,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.doug.newsapp.data.remote.models.Article
 import com.doug.newsapp.data.remote.models.NewsModel
 import com.doug.newsapp.data.remote.models.Source
-import com.doug.newsapp.data.remote.services.NewsDataManager
 import com.doug.newsapp.data.remote.services.NewsService
 import com.doug.newsapp.data.repositories.NewsRepository
 import com.doug.newsapp.data.repositories.NewsRepositoryImp

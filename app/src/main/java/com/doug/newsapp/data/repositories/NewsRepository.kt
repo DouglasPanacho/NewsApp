@@ -9,5 +9,5 @@ interface NewsRepository {
     /** Function used to get the headline news from a specific country
      * @param page The current page to request  from api
      * @param country The desired country**/
-    fun getHeadlineNews(page: Int, country: String): Single<MutableList<Article>>
+    fun getHeadlineNews(page: Int, country: String): Observable<MutableList<Article>>
 }

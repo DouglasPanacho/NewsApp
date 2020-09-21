@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.doug.newsapp.data.remote.models.Article
 import com.doug.newsapp.data.repositories.NewsRepository
 import com.doug.newsapp.helpers.ViewStatus
+import com.doug.newsapp.helpers.toDate
 import com.doug.newsapp.ui.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -28,12 +29,15 @@ class NewsViewModel @Inject constructor() : BaseViewModel() {
      * @param country The desired country **/
     fun getNews(page: Int, country: String = "us") {
         androidDisposable += newsRepository.getHeadlineNews(page, country)
+            .flatMapIterable { it }
+            .doOnNext {
+                if (!it.publishedAt.isNullOrEmpty()) it.publishedAt = it.publishedAt?.toDate()
+            }
+            .toList()
             .subscribeOn(Schedulers.io())
             .onErrorReturn {
-                mutableListOf()
-            }
-            .doOnError {
                 viewStatus.postValue(ViewStatus.ErrorStatus)
+                mutableListOf()
             }
             .doOnSuccess {
                 if (it.size == 0 && page == 0) {

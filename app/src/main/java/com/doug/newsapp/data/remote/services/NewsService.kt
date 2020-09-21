@@ -3,6 +3,7 @@ package com.doug.newsapp.data.remote.services
 
 import com.doug.newsapp.data.remote.models.NewsModel
 import io.reactivex.Observable
+import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 
